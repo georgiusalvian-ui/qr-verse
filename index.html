@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+
+        </title>
+    </head>
+    <body>
+        <h1>“Do not trust fortune-telling. Trust God alone.”</h1>
+        <p id="verse">[Verse will appear here]</p>
+        <script>
+            const verses = [
+            {text: "I can do all things through Christ who strenghtens me.",ref: "Philippians 4:13"},
+            {text: "The LORD is my shepherd; I shall not want.", ref: "Psalm 23:1" },
+            {text: "For God so loved the world that He gave His only begotten Son.", ref: "John 3:16" } 
+            ];
+
+            const randomIndex = Math.floor(Math.random() * verses.length);
+            const chosen = verses[randomIndex];
+
+            document.getElementById("verse").textContent = chosen.text + " — " + chosen.ref;
+        </script>
+    </body>
+</html>
