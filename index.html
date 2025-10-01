@@ -1,24 +1,195 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>All Hallows’ Eve Verse</title>
+  <meta name="description" content="Scan for a random Bible verse. Trust God alone." />
 
-        </title>
-    </head>
-    <body>
-        <h1>“Do not trust fortune-telling. Trust God alone.”</h1>
-        <p id="verse">[Verse will appear here]</p>
-        <script>
-            const verses = [
-            {text: "I can do all things through Christ who strenghtens me.",ref: "Philippians 4:13"},
-            {text: "The LORD is my shepherd; I shall not want.", ref: "Psalm 23:1" },
-            {text: "For God so loved the world that He gave His only begotten Son.", ref: "John 3:16" } 
-            ];
+  <!-- Fonts (serif for verse, sans for UI) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
-            const randomIndex = Math.floor(Math.random() * verses.length);
-            const chosen = verses[randomIndex];
+  <style>
+    :root{
+      --bg: #0c0a12;          
+      --bg2:#1a1426;           
+      --gold:#f5c970;          
+      --gold-dim:#d8aa49;
+      --text:#f7f5ff;
+      --muted:#cfc7e6;
+      --accent:#6d28d9;        
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% -10%, #221933 0%, transparent 60%),
+        radial-gradient(1000px 700px at 120% 10%, #1b1230 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+    }
 
-            document.getElementById("verse").textContent = chosen.text + " — " + chosen.ref;
-        </script>
-    </body>
+    .card{
+      width:min(900px, 92vw);
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius:24px;
+      padding:28px 28px 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05);
+      position:relative;
+    }
+
+    /* soft golden glow top edge (candle vibe) */
+    .card:before{
+      content:"";
+      position:absolute; inset:-1px -1px auto -1px; height:8px;
+      background: radial-gradient(60% 160% at 50% -40%, var(--gold) 0%, transparent 70%);
+      filter: blur(4px); opacity:.55; border-top-left-radius:24px; border-top-right-radius:24px;
+      pointer-events:none;
+    }
+
+    .reminder{
+      margin: 4px 0 12px;
+      font-size: clamp(18px, 2.4vw, 22px);
+      color: var(--muted);
+      letter-spacing:.1px;
+    }
+
+    .cross{
+      color:var(--gold);
+      margin: 0 .5rem;
+      filter: drop-shadow(0 0 6px rgba(245,201,112,.45));
+    }
+
+    h1{
+      font-family: "Playfair Display", serif;
+      font-weight:700;
+      font-size: clamp(30px, 5.8vw, 56px);
+      line-height:1.15;
+      margin: 0 0 8px 0;
+      text-shadow: 0 2px 18px rgba(109,40,217,.28);
+    }
+
+    #verse{
+      font-family: "Playfair Display", serif;
+      font-weight:600;
+      font-size: clamp(20px, 3.6vw, 32px);
+      line-height:1.4;
+      margin: 14px 0 8px;
+      color:var(--text);
+    }
+
+    .footer{
+      margin-top: 14px;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      color:var(--muted); font-size:14px;
+      border-top:1px solid rgba(255,255,255,.08);
+      padding-top:10px;
+    }
+
+    .badge{
+      font-size:12px; padding:4px 8px; border-radius:999px;
+      background: rgba(245,201,112,.12);
+      border: 1px solid rgba(245,201,112,.35);
+      color: var(--gold);
+    }
+
+    /* respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .card:before{ display:none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-live="polite">
+    <div class="reminder">
+      Don't trust tarot or fortune-telling. <span class="cross" aria-hidden="true">✠</span> Trust God alone.
+    </div>
+
+    <h1>All Hallows' Eve Reflection</h1>
+
+    <p id="verse">[Verse will appear here]</p>
+
+    <div class="footer">
+      <span class="badge" aria-label="Feast context">All Hallows’ Eve</span>
+    </div>
+  </main>
+
+  <script>
+    
+    const verses = [
+  { text: "I can do all things through Christ which strengtheneth me.", ref: "Philippians 4:13" },
+  { text: "He giveth power to the faint; and to them that have no might he increaseth strength.", ref: "Isaiah 40:29" },
+  { text: "Be strong and of a good courage; be not afraid... for the LORD thy God is with thee whithersoever thou goest.", ref: "Joshua 1:9" },
+  { text: "The LORD is my light and my salvation; whom shall I fear?", ref: "Psalm 27:1" },
+  { text: "God is our refuge and strength, a very present help in trouble.", ref: "Psalm 46:1" },
+  { text: "My grace is sufficient for thee: for my strength is made perfect in weakness.", ref: "2 Corinthians 12:9" },
+  { text: "Be strong in the Lord, and in the power of his might.", ref: "Ephesians 6:10" },
+  { text: "Be strong and of a good courage... he will not fail thee, nor forsake thee.", ref: "Deuteronomy 31:6" },
+  { text: "The joy of the LORD is your strength.", ref: "Nehemiah 8:10" },
+  { text: "My flesh and my heart faileth: but God is the strength of my heart, and my portion for ever.", ref: "Psalm 73:26" },
+  { text: "Seek the LORD and his strength, seek his face continually.", ref: "1 Chronicles 16:11" },
+  
+  { text: "Peace I leave with you, my peace I give unto you... Let not your heart be troubled.", ref: "John 14:27" },
+  { text: "The peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.", ref: "Philippians 4:7" },
+  { text: "Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee.", ref: "Isaiah 26:3" },
+  { text: "Let the peace of God rule in your hearts; and be ye thankful.", ref: "Colossians 3:15" },
+  { text: "Being justified by faith, we have peace with God through our Lord Jesus Christ.", ref: "Romans 5:1" },
+  { text: "I will both lay me down in peace, and sleep: for thou, LORD, only makest me dwell in safety.", ref: "Psalm 4:8" },
+  { text: "The LORD lift up his countenance upon thee, and give thee peace.", ref: "Numbers 6:26" },
+  { text: "The Lord of peace himself give you peace always by all means.", ref: "2 Thessalonians 3:16" },
+  { text: "Blessed are the peacemakers: for they shall be called the children of God.", ref: "Matthew 5:9" },
+  { text: "Follow peace with all men, and holiness, without which no man shall see the Lord.", ref: "Hebrews 12:14" },
+  { text: "The LORD will bless his people with peace.", ref: "Psalm 29:11" },
+  { text: "When a mans ways please the LORD, he maketh even his enemies to be at peace with him.", ref: "Proverbs 16:7" },
+
+  { text: "I know the thoughts that I think toward you... to give you an expected end.", ref: "Jeremiah 29:11" },
+  { text: "The God of hope fill you with all joy and peace in believing, that ye may abound in hope.", ref: "Romans 15:13" },
+  { text: "We are saved by hope... if we hope for that we see not, then do we with patience wait for it.", ref: "Romans 8:24–25" },
+  { text: "Why art thou cast down, O my soul? hope thou in God: for I shall yet praise him.", ref: "Psalm 42:5" },
+  { text: "The LORD is my portion, saith my soul; therefore will I hope in him.", ref: "Lamentations 3:24" },
+  { text: "And now, Lord, what wait I for? my hope is in thee.", ref: "Psalm 39:7" },
+  { text: "Begotten us again unto a lively hope by the resurrection of Jesus Christ from the dead.", ref: "1 Peter 1:3" },
+  { text: "Which hope we have as an anchor of the soul, both sure and stedfast.", ref: "Hebrews 6:19" },
+  { text: "I wait for the LORD, my soul doth wait, and in his word do I hope.", ref: "Psalm 130:5" },
+  { text: "Surely there is an end; and thine expectation shall not be cut off.", ref: "Proverbs 23:18" },
+  { text: "I will look unto the LORD; I will wait for the God of my salvation: my God will hear me.", ref: "Micah 7:7" },
+  { text: "Thou art my hope, O Lord GOD: thou art my trust from my youth.", ref: "Psalm 71:5" },
+
+  { text: "Trust in the LORD with all thine heart... and he shall direct thy paths.", ref: "Proverbs 3:5–6" },
+  { text: "Thy word is a lamp unto my feet, and a light unto my path.", ref: "Psalm 119:105" },
+  { text: "I will instruct thee and teach thee in the way which thou shalt go: I will guide thee with mine eye.", ref: "Psalm 32:8" },
+  { text: "Thine ears shall hear a word behind thee, saying, This is the way, walk ye in it.", ref: "Isaiah 30:21" },
+  { text: "If any of you lack wisdom, let him ask of God... and it shall be given him.", ref: "James 1:5" },
+  { text: "The steps of a good man are ordered by the LORD.", ref: "Psalm 37:23" },
+  { text: "A man's heart deviseth his way: but the LORD directeth his steps.", ref: "Proverbs 16:9" },
+  { text: "When he, the Spirit of truth, is come, he will guide you into all truth.", ref: "John 16:13" },
+  { text: "Show me thy ways, O LORD; teach me thy paths. Lead me in thy truth.", ref: "Psalm 25:4–5" },
+  { text: "Call unto me, and I will answer thee, and show thee great and mighty things.", ref: "Jeremiah 33:3" },
+  { text: "The LORD shall guide thee continually... and thou shalt be like a watered garden.", ref: "Isaiah 58:11" },
+  { text: "Thou shalt guide me with thy counsel, and afterward receive me to glory.", ref: "Psalm 73:24" },
+
+  { text: "Neither do I condemn thee: go, and sin no more.", ref: "John 8:11" },
+  { text: "If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness.", ref: "1 John 1:9" },
+  { text: "Repent ye therefore, and be converted, that your sins may be blotted out.", ref: "Acts 3:19" },
+  { text: "Repent, and turn yourselves from all your transgressions; so iniquity shall not be your ruin.", ref: "Ezekiel 18:30" },
+  { text: "Wash you, make you clean; put away the evil of your doings... cease to do evil.", ref: "Isaiah 1:16" },
+  { text: "Let not sin therefore reign in your mortal body, that ye should obey it in the lusts thereof.", ref: "Romans 6:12" },
+  { text: "Be not conformed to this world: but be ye transformed by the renewing of your mind.", ref: "Romans 12:2" },
+  { text: "This is the will of God, even your sanctification, that ye should abstain from fornication.", ref: "1 Thessalonians 4:3" },
+  { text: "Flee also youthful lusts: but follow righteousness, faith, charity, peace.", ref: "2 Timothy 2:22" },
+  { text: "Be ye holy; for I am holy.", ref: "1 Peter 1:16" },
+  { text: "Denying ungodliness and worldly lusts, we should live soberly, righteously, and godly.", ref: "Titus 2:12" },
+  { text: "Walk in the Spirit, and ye shall not fulfil the lust of the flesh.", ref: "Galatians 5:16" },
+];
+
+    const i = Math.floor(Math.random() * verses.length);
+    const v = verses[i];
+    document.getElementById("verse").textContent = "“" + v.text + "” — " + v.ref;
+  </script>
+</body>
 </html>
